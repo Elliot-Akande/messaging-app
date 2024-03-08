@@ -12,10 +12,15 @@ export interface UserDocument extends UserInput, mongoose.Document {
   validatePassword: (candidatePassword: string) => Promise<boolean>;
 }
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-});
+const userSchema = new mongoose.Schema(
+  {
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 userSchema.index({ username: 1 });
 
