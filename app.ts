@@ -7,7 +7,7 @@ import logger from "morgan";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import indexRouter from "./routes/index";
+import indexRouter from "./routes/index.js";
 
 const app = express();
 
