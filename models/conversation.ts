@@ -1,19 +1,20 @@
 import mongoose, { ObjectId } from "mongoose";
-import { MessageDocument } from "./message.js";
-import Message from "./message.js";
+import { MessageDocument, MessageInput, messageSchema } from "./message.js";
 
 export interface ConversationInput {
   users: ObjectId[];
-  messages: MessageDocument[];
+  messages: MessageInput[];
 }
 
 export interface ConversationDocument
   extends ConversationInput,
-    mongoose.Document {}
+    mongoose.Document {
+  messages: MessageDocument[];
+}
 
 const conversationSchema = new mongoose.Schema({
   users: [{ type: mongoose.Types.ObjectId, ref: "User", required: true }],
-  messages: [Message],
+  messages: [messageSchema],
 });
 
 export default mongoose.model<ConversationDocument>(
