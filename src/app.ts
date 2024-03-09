@@ -1,6 +1,7 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import httpError from "http-errors";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import passport from "./passportSetup.js";
@@ -36,5 +37,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRouter);
+
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+  console.error(err);
+
+  let errMessage = "An error occurred";
+  let statusCode = 500;
+  if (httpError.isHttpError(err) && err.status < 500) {
+    errMessage = err.message;
+    statusCode = err.status;
+  }
+  res.status(statusCode);
+  res.json({ err: errMessage });
+});
 
 export default app;
