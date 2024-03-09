@@ -12,7 +12,7 @@ import mongoose from "mongoose";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import indexRouter from "./routes/index.js";
+import authRouter from "./routes/auth.js";
 
 // Set up mongoose connection
 mongoose.set("strictQuery", false);
@@ -71,6 +71,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/", indexRouter);
+app.use("/auth", authRouter);
 
 export default app;
