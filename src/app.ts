@@ -9,6 +9,17 @@ const __dirname = path.dirname(__filename);
 
 import indexRouter from "./routes/index.js";
 
+// Set up mongoose connection
+import mongoose from "mongoose";
+mongoose.set("strictQuery", false);
+
+main().catch((err) => console.error(err));
+async function main() {
+  const mongoDB = process.env.MONGO_URL;
+  if (!mongoDB) throw new Error("MONGO_URL is undefined");
+  await mongoose.connect(mongoDB);
+}
+
 const app = express();
 
 app.use(logger("dev"));
