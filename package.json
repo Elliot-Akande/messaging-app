@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "tsx ./bin/www",
-    "dev": "DEBUG=messaging-app:* tsx watch -r dotenv/config ./bin/www"
+    "dev": "DEBUG=messaging-app:* tsx watch -r dotenv/config ./bin/www",
+    "test": "vitest"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
