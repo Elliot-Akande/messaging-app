@@ -48,7 +48,7 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     statusCode = err.status;
   }
   res.status(statusCode);
-  res.json({ err: errMessage });
+  res.json({ msg: errMessage });
 });
 
 export default app;
