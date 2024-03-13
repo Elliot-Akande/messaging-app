@@ -19,7 +19,7 @@ const userSchema: JSONSchemaType<UserIDs> = {
   additionalProperties: false,
 };
 
-export const chatsGET = asyncHandler(
+export const getUserChats = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as UserDocument;
 
@@ -36,7 +36,7 @@ export const chatsGET = asyncHandler(
   }
 );
 
-export const chatsPOST = [
+export const createChat = [
   validateBody(userSchema),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const userIDs = req.body.users;
