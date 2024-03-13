@@ -8,6 +8,8 @@ import passport from "./passportSetup.js";
 import session from "express-session";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth.js";
+import chatRouter from "./routes/chat.js";
+import authCheck from "./middleware/authCheck.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +39,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRouter);
+app.use("/chats", authCheck, chatRouter);
 
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
