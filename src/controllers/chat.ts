@@ -1,13 +1,18 @@
-import { NextFunction, Request, Response } from "express";
-import Chat from "../models/Chat.js";
-import asyncHandler from "express-async-handler";
 import { JSONSchemaType } from "ajv";
-import validateBody from "../middleware/validateBody.js";
-import User, { UserDocument } from "../models/User.js";
+import { NextFunction, Request, Response } from "express";
+import asyncHandler from "express-async-handler";
 import createHttpError from "http-errors";
+import validateBody from "../middleware/validateBody.js";
+import Chat from "../models/Chat.js";
+import Message from "../models/Message.js";
+import User, { UserDocument } from "../models/User.js";
 
 interface UserIDs {
   users: string[];
+}
+
+interface Message {
+  message: string;
 }
 
 const userSchema: JSONSchemaType<UserIDs> = {
@@ -19,6 +24,16 @@ const userSchema: JSONSchemaType<UserIDs> = {
   additionalProperties: false,
 };
 
+const messageSchema: JSONSchemaType<Message> = {
+  type: "object",
+  properties: {
+    message: { type: "string" },
+  },
+  required: ["message"],
+  additionalProperties: false,
+};
+
+// GET all Chats User is part of
 export const getUserChats = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as UserDocument;
@@ -36,6 +51,7 @@ export const getUserChats = asyncHandler(
   }
 );
 
+// POST request to create new chat
 export const createChat = [
   validateBody(userSchema),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
@@ -56,5 +72,28 @@ export const createChat = [
     const chat = await Chat.create({ users });
 
     res.status(201).json({ data: chat.id });
+  }),
+];
+
+// POST request to create new message
+export const createMessage = [
+  validateBody(messageSchema),
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const chat = await Chat.findById(req.params.chatId).exec();
+    if (!chat) {
+      return next(createHttpError(404, "Chat not found"));
+    }
+
+    // Check User is part of Chat
+    const user = req.user as UserDocument;
+    if (!chat.users.includes(user._id)) {
+      return next(createHttpError(403));
+    }
+
+    const message = await chat.createMessage(req.body.message, user._id);
+
+    res.json({
+      data: message,
+    });
   }),
 ];
