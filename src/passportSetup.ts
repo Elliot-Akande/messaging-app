@@ -1,7 +1,7 @@
 import createHttpError from "http-errors";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import User, { UserDocument } from "./models/user.js";
+import User, { UserDocument } from "./models/User.js";
 
 passport.use(
   new LocalStrategy(async (username: string, password: string, done) => {

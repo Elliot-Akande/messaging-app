@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import passport from "passport";
 import validateBody from "../middleware/validateBody.js";
-import User, { UserInput } from "../models/user.js";
+import User, { UserInput } from "../models/User.js";
 
 // Used for req body validation with ajv
 const userSchema: JSONSchemaType<UserInput> = {
