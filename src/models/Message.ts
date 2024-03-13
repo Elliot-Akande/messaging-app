@@ -18,3 +18,5 @@ export const messageSchema = new mongoose.Schema(
     timestamps: { createdAt: true, updatedAt: false },
   }
 );
+
+export default mongoose.model<MessageDocument>("Message", messageSchema);
