@@ -6,6 +6,7 @@ import validateBody from "../middleware/validateBody.js";
 import Chat from "../models/Chat.js";
 import Message from "../models/Message.js";
 import User, { UserDocument } from "../models/User.js";
+import { ObjectId } from "mongoose";
 
 interface UserIDs {
   users: string[];
@@ -40,14 +41,53 @@ export const getUserChats = asyncHandler(
 
     // Get all chats user is part of
     // Exclude logged in user from returned data
-    const chats = await Chat.find({ users: user.id }, { users: 1 })
+    const chats = await Chat.find({ users: user._id }, { users: 1 })
       .populate({
         path: "users",
-        match: { _id: { $ne: user.id } },
+        match: { _id: { $ne: user._id } },
         select: "username",
       })
       .exec();
     res.json({ data: chats });
+  }
+);
+
+// GET specified Chat
+export const getChat = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const chat = await Chat.findById(req.params.chatId)
+      .populate("users", "username")
+      .exec();
+    if (!chat) {
+      return next(createHttpError("404", "Chat not found"));
+    }
+
+    // Check User is part of Chat
+    const user = req.user as UserDocument;
+    const chatUsers = chat.users as unknown as Array<{
+      _id: ObjectId;
+      username: string;
+    }>;
+    if (
+      !chatUsers.some(
+        (chatUser) => chatUser._id.toString() === user._id.toString()
+      )
+    ) {
+      return next(createHttpError(403));
+    }
+
+    // Remove current User data from Users
+    const filtered = chatUsers.filter(
+      (chatUser) => chatUser._id.toString() !== user._id.toString()
+    );
+
+    res.json({
+      data: {
+        _id: chat.id,
+        users: filtered,
+        messages: chat.messages,
+      },
+    });
   }
 );
 
