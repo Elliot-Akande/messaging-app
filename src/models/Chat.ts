@@ -1,9 +1,8 @@
 import mongoose, { ObjectId } from "mongoose";
-import { MessageDocument, MessageInput, messageSchema } from "./Message.js";
+import { MessageDocument, messageSchema } from "./Message.js";
 
 export interface ChatInput {
   users: ObjectId[];
-  messages: MessageInput[];
 }
 
 export interface ChatDocument extends ChatInput, mongoose.Document {
